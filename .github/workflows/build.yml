@@ -45,6 +45,6 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: /opt/images/*
-        tag: ${F_TIME}
+        tag: ${{ steps.current-time.outputs.formattedTime }}
         file_glob: true
         overwrite: true
