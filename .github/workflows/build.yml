@@ -31,7 +31,7 @@ jobs:
       uses: 1466587594/get-current-time@master
       id: current-time
       with:
-        format: YYYYMMDD-HHSS
+        format: YYYY-MMDD-HHSS
         utcOffset: "+08:00"
 
     - name: Upload to release
