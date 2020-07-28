@@ -1,0 +1,46 @@
+name: Action-Test
+
+on: 
+  watch:
+    types: [started]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+    - name: Copy files
+      uses: actions/checkout@main
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        mkdir -p /opt/images
+        sudo cp -f /usr/sbin/adduser /opt/images
+        sudo cp -f /usr/sbin/deluser /opt/images
+
+    - name: Upload packages
+      uses: actions/upload-artifact@main
+      if: always()
+      with:
+        name: Asset-Test
+        path: /opt/images
+
+    - name: Get current time
+      uses: 1466587594/get-current-time@master
+      id: current-time
+      with:
+        format: YYYYMMDD-HH
+        utcOffset: "+08:00"
+
+    - name: Upload to release
+      uses: svenstaro/upload-release-action@master
+      env:
+        F_TIME: "${{ steps.current-time.outputs.formattedTime }}"
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: /opt/images/*
+        tag: $F_TIME
+        file_glob: true
+        overwrite: true
